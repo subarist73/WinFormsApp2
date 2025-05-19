@@ -583,26 +583,28 @@ namespace WinFormsApp2
                     return;
                 }
 
-                if (!heapManager.IsStepInProgress())// ❗Проверка, не в процессе ли вставки
+                HeapParameters parameters;
+                try
                 {
-                    MessageBox.Show("Завершите текущую вставку перед добавлением нового элемента.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
+                    string input = textBox1.Text;
+                    string[] parts = input.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    List<int> numbers = new List<int>();
+                    foreach (string part in parts)
+                    {
+                        numbers.Add(int.Parse(part.Trim()));
+                    }
+                    parameters = new HeapParameters(numbers, false);
+
+                    this.parameters = parameters;
+                    currentInsertIndex = 0;
+
+                    textBox1.Clear();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка ввода: " + ex.Message);
                 }
 
-                if (!int.TryParse(textBox1.Text.Trim(), out int newValue))
-                {
-                    MessageBox.Show("Введите корректное целое число.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                // Вставка нового элемента
-                heapManager.Insert(newValue);
-                UpdateStatus($"Добавлен элемент: {newValue}");
-
-                // Для отображения нового состояния
-                RedrawHeap();
-
-                textBox1.Clear();
             }
         }
     }
